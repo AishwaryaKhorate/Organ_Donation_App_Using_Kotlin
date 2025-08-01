@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
@@ -19,6 +18,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
+        <!-- Personal Info -->
+        <EditText
+            android:id="@+id/editTextName"
+            android:hint="Full Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/editTextContact"
+            android:hint="Contact Number"
+            android:inputType="phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/editTextAddress"
+            android:hint="Address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Medical Info -->
         <EditText
             android:id="@+id/editTextBloodGroup"
             android:hint="Blood Group"
@@ -45,12 +68,43 @@
             android:hint="Allergies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/editTextSmoking"
+            android:hint="Smoking status (Yes/No)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/editTextHeight"
+            android:hint="Height (in cm)"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/editTextWeight"
+            android:hint="Weight (in kg)"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <EditText
+            android:id="@+id/editTextSurgeries"
+            android:hint="Previous surgeries (if any)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
 
         <Button
             android:id="@+id/buttonSubmitMedical"
             android:text="Submit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 </ScrollView>

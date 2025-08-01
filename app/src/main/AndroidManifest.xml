@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.organ_donation_app">
-
     <!-- Permissions (if you use internet/Firebase) -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,25 +11,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Organ_donation_app">
-
+        <activity
+            android:name=".AllMedicalHistoryActivity"
+            android:exported="false" />
         <activity
             android:name=".SplashActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".DonorDashboardActivity" />
         <activity android:name=".HospitalDashboardActivity" />
         <activity android:name=".MedicalHistoryActivity" />
         <activity android:name=".OrganDonationActivity" />
-        <activity android:name=".DonationHistoryActivity" />
-
+        <activity android:name=".AllDonationsActivity" />
     </application>
 
 </manifest>

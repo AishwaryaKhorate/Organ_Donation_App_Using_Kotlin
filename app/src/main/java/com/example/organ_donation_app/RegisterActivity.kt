@@ -33,7 +33,7 @@ class RegisterActivity : AppCompatActivity() {
         registerButton = findViewById(R.id.buttonRegister)
         loginRedirect = findViewById(R.id.textLogin)
 
-        // Spinner items
+
         val roles = arrayOf("Donor", "Hospital")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, roles)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

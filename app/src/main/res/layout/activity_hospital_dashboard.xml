@@ -1,15 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="24dp"
     android:background="#FFFFFF">
 
     <LinearLayout
-        android:id="@+id/donationListLayout"
-        android:orientation="vertical"
+        android:id="@+id/donationHistoryList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- New Buttons at Top -->
+        <Button
+            android:id="@+id/buttonViewDonationHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Donation History"
+            android:layout_marginBottom="12dp"/>
+
+        <Button
+            android:id="@+id/buttonViewMedicalHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Donor Medical History"
+            android:layout_marginBottom="24dp"/>
+        <Button
+            android:id="@+id/buttonLogout2"
+            android:text="Logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!-- Existing donation records will be added here dynamically -->
+
     </LinearLayout>
 </ScrollView>

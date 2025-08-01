@@ -13,7 +13,6 @@ class DonorDashboardActivity : AppCompatActivity() {
     private lateinit var welcomeText: TextView
     private lateinit var buttonMedicalHistory: Button
     private lateinit var buttonDonateOrgan: Button
-    private lateinit var buttonHistory: Button
     private lateinit var buttonLogout: Button
 
     private lateinit var auth: FirebaseAuth
@@ -29,7 +28,6 @@ class DonorDashboardActivity : AppCompatActivity() {
         welcomeText = findViewById(R.id.textWelcome)
         buttonMedicalHistory = findViewById(R.id.buttonMedicalHistory)
         buttonDonateOrgan = findViewById(R.id.buttonDonateOrgan)
-        buttonHistory = findViewById(R.id.buttonHistory)
         buttonLogout = findViewById(R.id.buttonLogout)
 
         val uid = auth.currentUser?.uid
@@ -49,13 +47,10 @@ class DonorDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, OrganDonationActivity::class.java))
         }
 
-        buttonHistory.setOnClickListener {
-            startActivity(Intent(this, DonationHistoryActivity::class.java))
-        }
 
         buttonLogout.setOnClickListener {
             auth.signOut()
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, RegisterActivity::class.java))
             finish()
         }
     }
