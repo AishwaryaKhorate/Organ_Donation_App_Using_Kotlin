@@ -9,15 +9,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterActivity : AppCompatActivity() {
 
+    private lateinit var editTextName: EditText
+    private lateinit var editTextEmail: EditText
+    private lateinit var editTextPassword: EditText
+    private lateinit var radioGroupRole: RadioGroup
+    private lateinit var buttonRegister: Button
+    private lateinit var textViewLogin: TextView
+
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var nameEditText: EditText
-    private lateinit var roleSpinner: Spinner
-    private lateinit var registerButton: Button
-    private lateinit var loginRedirect: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,59 +26,53 @@ class RegisterActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        emailEditText = findViewById(R.id.editTextEmail)
-        passwordEditText = findViewById(R.id.editTextPassword)
-        nameEditText = findViewById(R.id.editTextName)
-        roleSpinner = findViewById(R.id.roleSpinner)
-        registerButton = findViewById(R.id.buttonRegister)
-        loginRedirect = findViewById(R.id.textLogin)
+        editTextName = findViewById(R.id.editTextName)
+        editTextEmail = findViewById(R.id.editTextEmail)
+        editTextPassword = findViewById(R.id.editTextPassword)
+        radioGroupRole = findViewById(R.id.radioGroupRole)
+        buttonRegister = findViewById(R.id.buttonRegister)
+        textViewLogin = findViewById(R.id.textViewLogin)
 
+        textViewLogin.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }
 
-        val roles = arrayOf("Donor", "Hospital")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, roles)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        roleSpinner.adapter = adapter
+        buttonRegister.setOnClickListener {
+            val name = editTextName.text.toString().trim()
+            val email = editTextEmail.text.toString().trim()
+            val password = editTextPassword.text.toString().trim()
+            val role = if (radioGroupRole.checkedRadioButtonId == R.id.radioDonor) "Donor" else "Hospital"
 
-        registerButton.setOnClickListener {
-            val email = emailEditText.text.toString().trim()
-            val password = passwordEditText.text.toString().trim()
-            val name = nameEditText.text.toString().trim()
-            val role = roleSpinner.selectedItem.toString()
-
-            if (email.isEmpty() || password.isEmpty() || name.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
-                    val uid = auth.currentUser?.uid ?: return@addOnSuccessListener
-
-                    val userMap = hashMapOf(
+                    val uid = it.user?.uid ?: return@addOnSuccessListener
+                    val user = hashMapOf(
                         "uid" to uid,
-                        "email" to email,
                         "name" to name,
+                        "email" to email,
                         "role" to role
                     )
 
                     firestore.collection("users").document(uid)
-                        .set(userMap)
+                        .set(user)
                         .addOnSuccessListener {
-                            Toast.makeText(this, "Registered as $role", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Registered Successfully", Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this, LoginActivity::class.java))
                             finish()
                         }
                         .addOnFailureListener {
-                            Toast.makeText(this, "Failed to store user data", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
                         }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "Registration Failed: ${it.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Registration failed: ${it.message}", Toast.LENGTH_SHORT).show()
                 }
-        }
-
-        loginRedirect.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
         }
     }
 }

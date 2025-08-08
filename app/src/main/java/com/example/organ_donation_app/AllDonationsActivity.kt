@@ -1,10 +1,13 @@
 package com.example.organ_donation_app
 
+import android.graphics.Color
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -12,20 +15,33 @@ import java.util.*
 
 class AllDonationsActivity : AppCompatActivity() {
 
+    private lateinit var donationListLayout: LinearLayout
     private lateinit var firestore: FirebaseFirestore
-    private lateinit var donationsLayout: LinearLayout
+
+    // pastel colors (will cycle)
+    private val cardColors = listOf(
+        Color.parseColor("#B3E5FC"), // Light Blue
+        Color.parseColor("#FFB6C1"), // Light Pink
+        Color.parseColor("#FFF9C4"), // Light Yellow
+        Color.parseColor("#C8E6C9")  // Light Green
+    )
+
+    private var currentCardCount = 0
+    // avoid duplicate display if loadAllDonations called multiple times
+    private val displayedDonationIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_all_donations)
 
+        donationListLayout = findViewById(R.id.allDonationList)
         firestore = FirebaseFirestore.getInstance()
-        donationsLayout = findViewById(R.id.allDonationsLayout)
 
         loadAllDonations()
     }
 
     private fun loadAllDonations() {
+        // real-time or one-shot? using one-shot get() here; you can switch to addSnapshotListener if you want live updates.
         firestore.collection("donations")
             .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
             .get()
@@ -36,23 +52,64 @@ class AllDonationsActivity : AppCompatActivity() {
                 }
 
                 for (doc in result.documents) {
+                    val donationId = doc.id
+                    if (displayedDonationIds.contains(donationId)) continue // skip duplicates
+                    displayedDonationIds.add(donationId)
+
                     val organ = doc.getString("organ") ?: "Unknown"
-                    val donorUid = doc.getString("uid") ?: "N/A"
+                    val donorUid = doc.getString("uid") ?: continue
                     val timestamp = doc.getTimestamp("timestamp") ?: Timestamp.now()
-                    val formattedDate = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
-                        .format(timestamp.toDate())
 
-                    val textView = TextView(this).apply {
-                        text = "Organ: $organ\nDonor UID: $donorUid\nDate: $formattedDate"
-                        textSize = 16f
-                        setPadding(20, 20, 20, 20)
-                    }
+                    // fetch donor info
+                    firestore.collection("medical_history").document(donorUid)
+                        .get()
+                        .addOnSuccessListener { donorDoc ->
+                            val name = donorDoc.getString("name") ?: "Name N/A"
+                            val contact = donorDoc.getString("contact") ?: "Contact N/A"
+                            val formattedDate = SimpleDateFormat(
+                                "dd MMM yyyy, hh:mm a",
+                                Locale.getDefault()
+                            ).format(timestamp.toDate())
 
-                    donationsLayout.addView(textView)
+                            // Inflate the item layout
+                            val itemView = layoutInflater.inflate(R.layout.item_donation, donationListLayout, false)
+
+                            // set texts
+                            itemView.findViewById<TextView>(R.id.textOrgan).text = "Organ: $organ"
+                            itemView.findViewById<TextView>(R.id.textName).text = "Name: $name"
+                            itemView.findViewById<TextView>(R.id.textContact).text = "Contact: $contact"
+                            itemView.findViewById<TextView>(R.id.textDate).text = "Date: $formattedDate"
+
+                            // set organ image
+                            val imageView = itemView.findViewById<ImageView>(R.id.imageOrgan)
+                            imageView.setImageResource(getOrganImage(organ))
+
+                            // set card color and insert at top (index 0)
+                            val card = itemView.findViewById<CardView>(R.id.cardViewItem)
+                            card.setCardBackgroundColor(cardColors[currentCardCount % cardColors.size])
+                            card.radius = 12f
+                            card.cardElevation = 6f
+
+                            donationListLayout.addView(itemView, 0) // add at top
+                            currentCardCount++
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Error fetching donor info", Toast.LENGTH_SHORT).show()
+                        }
                 }
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to load donations", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun getOrganImage(organ: String): Int {
+        return when (organ.lowercase(Locale.getDefault())) {
+            "kidney" -> R.drawable.kidney
+            "liver" -> R.drawable.liver
+            "heart" -> R.drawable.heart
+            "lungs" -> R.drawable.lungs
+            else -> R.drawable.ic_organ
+        }
     }
 }

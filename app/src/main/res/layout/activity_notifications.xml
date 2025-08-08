@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollViewMed"
+    android:id="@+id/scrollViewNotif"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
@@ -8,7 +8,7 @@
     android:fillViewport="true">
 
     <LinearLayout
-        android:id="@+id/allMedicalHistoryList"
+        android:id="@+id/notifList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />

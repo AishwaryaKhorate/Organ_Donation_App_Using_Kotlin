@@ -9,13 +9,14 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
+    private lateinit var editTextEmail: EditText
+    private lateinit var editTextPassword: EditText
+    private lateinit var radioGroupRole: RadioGroup
+    private lateinit var buttonLogin: Button
+    private lateinit var textViewRegister: TextView
+
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
-
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var loginButton: Button
-    private lateinit var registerRedirect: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,14 +25,21 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        emailEditText = findViewById(R.id.editTextEmail)
-        passwordEditText = findViewById(R.id.editTextPassword)
-        loginButton = findViewById(R.id.buttonLogin)
-        registerRedirect = findViewById(R.id.textRegister)
+        editTextEmail = findViewById(R.id.editTextEmail)
+        editTextPassword = findViewById(R.id.editTextPassword)
+        radioGroupRole = findViewById(R.id.radioGroupRole)
+        buttonLogin = findViewById(R.id.buttonLogin)
+        textViewRegister = findViewById(R.id.textViewRegister)
 
-        loginButton.setOnClickListener {
-            val email = emailEditText.text.toString().trim()
-            val password = passwordEditText.text.toString().trim()
+        textViewRegister.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+            finish()
+        }
+
+        buttonLogin.setOnClickListener {
+            val email = editTextEmail.text.toString().trim()
+            val password = editTextPassword.text.toString().trim()
+            val selectedRole = if (radioGroupRole.checkedRadioButtonId == R.id.radioDonor) "Donor" else "Hospital"
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
@@ -40,43 +48,33 @@ class LoginActivity : AppCompatActivity() {
 
             auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
-                    val uid = auth.currentUser?.uid ?: return@addOnSuccessListener
+                    val uid = it.user?.uid ?: return@addOnSuccessListener
 
-                    firestore.collection("users").document(uid).get()
-                        .addOnSuccessListener { document ->
-                            if (document != null && document.exists()) {
-                                val role = document.getString("role")
-                                when (role) {
-                                    "Donor" -> {
-                                        startActivity(Intent(this, DonorDashboardActivity::class.java))
-                                        finish()
-                                    }
-                                    "Hospital" -> {
-                                        startActivity(Intent(this, HospitalDashboardActivity::class.java))
-                                        finish()
-                                    }
-                                    else -> {
-                                        Toast.makeText(this, "Invalid user role", Toast.LENGTH_SHORT).show()
-                                        auth.signOut()
-                                    }
+                    firestore.collection("users").document(uid)
+                        .get()
+                        .addOnSuccessListener { doc ->
+                            val storedRole = doc.getString("role")
+                            if (storedRole == selectedRole) {
+                                Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show()
+                                val intent = if (storedRole == "Donor") {
+                                    Intent(this, DonorDashboardActivity::class.java)
+                                } else {
+                                    Intent(this, HospitalDashboardActivity::class.java)
                                 }
+                                startActivity(intent)
+                                finish()
                             } else {
-                                Toast.makeText(this, "User data not found", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Role mismatch. Please select correct role.", Toast.LENGTH_SHORT).show()
                                 auth.signOut()
                             }
                         }
                         .addOnFailureListener {
-                            Toast.makeText(this, "Failed to retrieve user role", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "User role not found", Toast.LENGTH_SHORT).show()
                         }
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Login failed: ${it.message}", Toast.LENGTH_SHORT).show()
                 }
-        }
-
-        registerRedirect.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
-            finish()
         }
     }
 }
