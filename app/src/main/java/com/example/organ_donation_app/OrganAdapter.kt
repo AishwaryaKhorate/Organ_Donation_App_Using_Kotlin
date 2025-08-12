@@ -40,11 +40,11 @@ class OrganAdapter(
             "bone marrow" -> R.drawable.bone_marrow
             else -> R.drawable.ic_organ
         }
-
         holder.organImage.setImageResource(imageRes)
 
+        // Save only the clicked organ
         holder.itemView.setOnClickListener {
-            onOrganSelected(organ)
+            onOrganSelected(organ) // Pass back the clicked organ name
         }
     }
 

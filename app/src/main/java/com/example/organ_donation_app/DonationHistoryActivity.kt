@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.organ_donation_app.adapter.DonationAdapter
 import com.example.organ_donation_app.model.Donation
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class DonationHistoryActivity : AppCompatActivity() {
 
@@ -18,14 +19,14 @@ class DonationHistoryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donation_history)
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        donationAdapter = DonationAdapter(donationList)
         recyclerView.adapter = donationAdapter
 
-// THIS IS WHAT ADDS SPACING — ensure it's called after setting adapter/layoutManager
-        val spacingInDp = 8
-        val spacingInPx = (spacingInDp * resources.displayMetrics.density).toInt()
-        recyclerView.addItemDecoration(VerticalSpaceItemDecoration(24)) // 24px = 12dp approx
+        // Keep your existing spacing
+        recyclerView.addItemDecoration(VerticalSpaceItemDecoration(24))
 
         fetchDonationsFromFirestore()
     }
@@ -33,6 +34,7 @@ class DonationHistoryActivity : AppCompatActivity() {
     private fun fetchDonationsFromFirestore() {
         val db = FirebaseFirestore.getInstance()
         db.collection("donations")
+            .orderBy("timestamp", Query.Direction.DESCENDING) // 🔹 Newest first
             .get()
             .addOnSuccessListener { result ->
                 donationList.clear()
