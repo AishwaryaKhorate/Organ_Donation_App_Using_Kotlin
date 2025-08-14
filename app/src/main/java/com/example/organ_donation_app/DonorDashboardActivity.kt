@@ -11,7 +11,7 @@ class DonorDashboardActivity : AppCompatActivity() {
 
     private lateinit var cardDonate: CardView
     private lateinit var cardMedical: CardView
-    private lateinit var cardHistory: CardView
+
     private lateinit var cardLogout: CardView
 
     private lateinit var auth: FirebaseAuth
@@ -24,7 +24,6 @@ class DonorDashboardActivity : AppCompatActivity() {
 
         cardDonate = findViewById(R.id.cardDonate)
         cardMedical = findViewById(R.id.cardMedical)
-        cardHistory = findViewById(R.id.cardHistory)
         cardLogout = findViewById(R.id.cardLogout)
 
         cardDonate.setOnClickListener {
@@ -35,9 +34,7 @@ class DonorDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, MedicalHistoryActivity::class.java))
         }
 
-        cardHistory.setOnClickListener {
-            startActivity(Intent(this, DonationHistoryActivity::class.java))
-        }
+
 
         cardLogout.setOnClickListener {
             auth.signOut()

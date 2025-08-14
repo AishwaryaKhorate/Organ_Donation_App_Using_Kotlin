@@ -11,7 +11,6 @@ class HospitalDashboardActivity : AppCompatActivity() {
 
     private lateinit var cardViewHistory: CardView
     private lateinit var cardViewOrganList: CardView
-    private lateinit var cardViewNotifications: CardView
     private lateinit var cardViewLogout: CardView
     private lateinit var auth: FirebaseAuth
 
@@ -23,7 +22,6 @@ class HospitalDashboardActivity : AppCompatActivity() {
 
         cardViewHistory = findViewById(R.id.cardViewDonations)
         cardViewOrganList = findViewById(R.id.cardViewOrgans)
-        cardViewNotifications = findViewById(R.id.cardNotifications)
         cardViewLogout = findViewById(R.id.cardLogout)
 
         cardViewHistory.setOnClickListener {
@@ -34,9 +32,6 @@ class HospitalDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, AllMedicalHistoryActivity::class.java))
         }
 
-        cardViewNotifications.setOnClickListener {
-            startActivity(Intent(this, NotificationsActivity::class.java))
-        }
 
         cardViewLogout.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))

@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="16dp"
+    android:fillViewport="true">
 
-    <androidx.gridlayout.widget.GridLayout
-        android:id="@+id/gridLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:columnCount="2"
-        app:useDefaultMargins="true"
-        app:alignmentMode="alignMargins">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
         <!-- Card 1: View Donations -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewDonations"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_columnWeight="1"
-            android:layout_margin="8dp"
+            android:layout_marginVertical="8dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
             app:cardBackgroundColor="#FFCDD2">
@@ -45,13 +43,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card 2: View Organs -->
+        <!-- Card 2: View Medical History -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewOrgans"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_columnWeight="1"
-            android:layout_margin="8dp"
+            android:layout_marginVertical="8dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
             app:cardBackgroundColor="#C5E1A5">
@@ -77,45 +74,12 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card 3: Notifications -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardNotifications"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            app:cardBackgroundColor="#B3E5FC">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@android:drawable/ic_dialog_email" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Notifications"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:layout_marginTop="8dp" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <!-- Card 4: Logout -->
+        <!-- Card 3: Logout -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardLogout"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_columnWeight="1"
-            android:layout_margin="8dp"
+            android:layout_marginVertical="8dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
             app:cardBackgroundColor="#FFE082">
@@ -141,5 +105,5 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-    </androidx.gridlayout.widget.GridLayout>
+    </LinearLayout>
 </ScrollView>
