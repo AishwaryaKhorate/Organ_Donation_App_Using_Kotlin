@@ -64,11 +64,20 @@ class MedicalHistoryActivity : AppCompatActivity() {
                 "timestamp" to Timestamp.now()
             )
 
+            // Save medical history
             firestore.collection("medical_history").document(uid)
                 .set(history)
                 .addOnSuccessListener {
-                    Toast.makeText(this, "Medical history saved", Toast.LENGTH_SHORT).show()
-                    finish()
+                    // Mark medical form as completed for this user
+                    firestore.collection("users").document(uid)
+                        .update("medicalFormCompleted", true)
+                        .addOnSuccessListener {
+                            Toast.makeText(this, "Medical history saved & marked complete", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(this, "Failed to update user record", Toast.LENGTH_SHORT).show()
+                        }
                 }
                 .addOnFailureListener {
                     Toast.makeText(this, "Failed to save medical history", Toast.LENGTH_SHORT).show()

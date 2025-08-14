@@ -35,7 +35,7 @@ class OrganAdapter(
             "lungs" -> R.drawable.lungs
             "pancreas" -> R.drawable.pancreas
             "intestines" -> R.drawable.intestine
-            "corneas" -> R.drawable.eye
+            "eye" -> R.drawable.eye
             "skin" -> R.drawable.skin
             "bone marrow" -> R.drawable.bone_marrow
             else -> R.drawable.ic_organ

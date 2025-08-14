@@ -29,9 +29,9 @@
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:text="Organ Name"
+            android:textColor="#333"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#333" />
+            android:textStyle="bold" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

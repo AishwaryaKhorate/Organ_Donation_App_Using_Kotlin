@@ -27,7 +27,6 @@ class AllDonationsActivity : AppCompatActivity() {
     )
 
     private var currentCardCount = 0
-    // avoid duplicate display if loadAllDonations called multiple times
     private val displayedDonationIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,26 +40,34 @@ class AllDonationsActivity : AppCompatActivity() {
     }
 
     private fun loadAllDonations() {
-        // real-time or one-shot? using one-shot get() here; you can switch to addSnapshotListener if you want live updates.
         firestore.collection("donations")
             .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { result ->
-                if (result.isEmpty) {
-                    Toast.makeText(this, "No donations found", Toast.LENGTH_SHORT).show()
-                    return@addOnSuccessListener
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Toast.makeText(this, "Failed to load donations", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
                 }
 
-                for (doc in result.documents) {
+                if (snapshots == null || snapshots.isEmpty) {
+                    Toast.makeText(this, "No donations found", Toast.LENGTH_SHORT).show()
+                    donationListLayout.removeAllViews()
+                    displayedDonationIds.clear()
+                    return@addSnapshotListener
+                }
+
+                // Clear and rebuild list
+                donationListLayout.removeAllViews()
+                displayedDonationIds.clear()
+                currentCardCount = 0
+
+                for (doc in snapshots.documents) {
                     val donationId = doc.id
-                    if (displayedDonationIds.contains(donationId)) continue // skip duplicates
                     displayedDonationIds.add(donationId)
 
                     val organ = doc.getString("organ") ?: "Unknown"
-                    val donorUid = doc.getString("uid") ?: continue
+                    val donorUid = doc.getString("userId") ?: continue
                     val timestamp = doc.getTimestamp("timestamp") ?: Timestamp.now()
 
-                    // fetch donor info
                     firestore.collection("medical_history").document(donorUid)
                         .get()
                         .addOnSuccessListener { donorDoc ->
@@ -71,35 +78,39 @@ class AllDonationsActivity : AppCompatActivity() {
                                 Locale.getDefault()
                             ).format(timestamp.toDate())
 
-                            // Inflate the item layout
-                            val itemView = layoutInflater.inflate(R.layout.item_donation, donationListLayout, false)
+                            val itemView = layoutInflater.inflate(
+                                R.layout.item_donation,
+                                donationListLayout,
+                                false
+                            )
 
-                            // set texts
+                            // Set text values
                             itemView.findViewById<TextView>(R.id.textOrgan).text = "Organ: $organ"
                             itemView.findViewById<TextView>(R.id.textName).text = "Name: $name"
                             itemView.findViewById<TextView>(R.id.textContact).text = "Contact: $contact"
                             itemView.findViewById<TextView>(R.id.textDate).text = "Date: $formattedDate"
 
-                            // set organ image
+                            // Set organ image
                             val imageView = itemView.findViewById<ImageView>(R.id.imageOrgan)
                             imageView.setImageResource(getOrganImage(organ))
 
-                            // set card color and insert at top (index 0)
+                            // Set card appearance
                             val card = itemView.findViewById<CardView>(R.id.cardViewItem)
                             card.setCardBackgroundColor(cardColors[currentCardCount % cardColors.size])
                             card.radius = 12f
                             card.cardElevation = 6f
 
-                            donationListLayout.addView(itemView, 0) // add at top
+                            donationListLayout.addView(itemView) // Already ordered by query
                             currentCardCount++
                         }
                         .addOnFailureListener {
-                            Toast.makeText(this, "Error fetching donor info", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                "Error fetching donor info",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to load donations", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -109,6 +120,11 @@ class AllDonationsActivity : AppCompatActivity() {
             "liver" -> R.drawable.liver
             "heart" -> R.drawable.heart
             "lungs" -> R.drawable.lungs
+            "skin" -> R.drawable.skin
+            "eye" -> R.drawable.eye
+            "pancreas" -> R.drawable.pancreas
+            "intestine" -> R.drawable.intestine
+            "bonemarrow" -> R.drawable.bone_marrow
             else -> R.drawable.ic_organ
         }
     }
