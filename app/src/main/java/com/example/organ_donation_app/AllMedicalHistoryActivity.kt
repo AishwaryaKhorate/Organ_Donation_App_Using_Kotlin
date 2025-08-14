@@ -25,7 +25,6 @@ class AllMedicalHistoryActivity : AppCompatActivity() {
     )
 
     private var currentCardCount = 0
-    private val displayedHistoryIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,18 +39,23 @@ class AllMedicalHistoryActivity : AppCompatActivity() {
     private fun loadAllMedicalHistories() {
         firestore.collection("medical_history")
             .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { result ->
-                if (result.isEmpty) {
-                    Toast.makeText(this, "No medical records found", Toast.LENGTH_SHORT).show()
-                    return@addOnSuccessListener
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Toast.makeText(this, "Failed to load medical records", Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
                 }
 
-                for (doc in result.documents) {
-                    val histId = doc.id
-                    if (displayedHistoryIds.contains(histId)) continue
-                    displayedHistoryIds.add(histId)
+                if (snapshots == null || snapshots.isEmpty) {
+                    Toast.makeText(this, "No medical records found", Toast.LENGTH_SHORT).show()
+                    historyListLayout.removeAllViews()
+                    return@addSnapshotListener
+                }
 
+                // Clear old list so new records are shown on top
+                historyListLayout.removeAllViews()
+                currentCardCount = 0
+
+                for (doc in snapshots.documents) {
                     val name = doc.getString("name") ?: "N/A"
                     val contact = doc.getString("contact") ?: "N/A"
                     val address = doc.getString("address") ?: "N/A"
@@ -60,10 +64,11 @@ class AllMedicalHistoryActivity : AppCompatActivity() {
                     val medications = doc.getString("medications") ?: "N/A"
                     val allergies = doc.getString("allergies") ?: "N/A"
                     val timestamp = doc.getTimestamp("timestamp") ?: Timestamp.now()
-                    val formattedDate = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
-                        .format(timestamp.toDate())
+                    val formattedDate = SimpleDateFormat(
+                        "dd MMM yyyy, hh:mm a",
+                        Locale.getDefault()
+                    ).format(timestamp.toDate())
 
-                    // Build view programmatically (CardView)
                     val card = CardView(this).apply {
                         radius = 16f
                         cardElevation = 6f
@@ -93,14 +98,9 @@ class AllMedicalHistoryActivity : AppCompatActivity() {
                     }
 
                     card.addView(tv)
-
-                    // add at top
-                    historyListLayout.addView(card, 0)
+                    historyListLayout.addView(card) // Already sorted by Firestore
                     currentCardCount++
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to load medical records", Toast.LENGTH_SHORT).show()
             }
     }
 }

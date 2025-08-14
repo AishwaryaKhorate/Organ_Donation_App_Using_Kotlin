@@ -120,10 +120,10 @@ class AllDonationsActivity : AppCompatActivity() {
             "liver" -> R.drawable.liver
             "heart" -> R.drawable.heart
             "lungs" -> R.drawable.lungs
-            "skin" -> R.drawable.skin
-            "eye" -> R.drawable.eye
             "pancreas" -> R.drawable.pancreas
             "intestine" -> R.drawable.intestine
+            "eye" -> R.drawable.eye
+            "skin" -> R.drawable.skin
             "bonemarrow" -> R.drawable.bone_marrow
             else -> R.drawable.ic_organ
         }

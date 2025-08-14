@@ -19,7 +19,7 @@ class OrganDonationActivity : AppCompatActivity() {
     private var isSubmitting = false // Prevent multiple submissions
 
     private val organList = listOf(
-        "Kidney", "Liver", "Heart", "Lungs", "Pancreas", "Intestines", "Corneas", "Skin", "Bone Marrow"
+        "Kidney", "Liver", "Heart", "Lungs", "Pancreas", "Intestine", "eye", "Skin", "Bonemarrow"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

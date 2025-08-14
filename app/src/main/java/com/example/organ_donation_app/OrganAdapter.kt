@@ -34,10 +34,10 @@ class OrganAdapter(
             "heart" -> R.drawable.heart
             "lungs" -> R.drawable.lungs
             "pancreas" -> R.drawable.pancreas
-            "intestines" -> R.drawable.intestine
+            "intestine" -> R.drawable.intestine
             "eye" -> R.drawable.eye
             "skin" -> R.drawable.skin
-            "bone marrow" -> R.drawable.bone_marrow
+            "bonemarrow" -> R.drawable.bone_marrow
             else -> R.drawable.ic_organ
         }
         holder.organImage.setImageResource(imageRes)
