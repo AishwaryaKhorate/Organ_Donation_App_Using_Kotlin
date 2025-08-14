@@ -25,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!-- Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -34,29 +35,35 @@
                     android:layout_gravity="center_horizontal"
                     android:paddingBottom="16dp"/>
 
+                <!-- Email -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Email">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textEmailAddress"/>
+                        android:inputType="textEmailAddress" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Password with Eye Icon -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
+                    app:endIconMode="password_toggle"
                     android:layout_marginTop="12dp">
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPassword"/>
+                        android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Role Selection -->
                 <RadioGroup
                     android:id="@+id/radioGroupRole"
                     android:layout_width="match_parent"
@@ -79,6 +86,7 @@
                         android:layout_marginStart="24dp"/>
                 </RadioGroup>
 
+                <!-- Login Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonLogin"
                     android:layout_width="match_parent"
@@ -87,10 +95,10 @@
                     android:layout_marginTop="24dp"
                     android:backgroundTint="?attr/colorPrimary"
                     android:textColor="#FFFFFF"/>
-
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- Register Link -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
