@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,6 +23,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
 
     private var isPasswordVisible = false
+    private val HOSPITAL_SECRET_CODE = "hospital123" // 🔹 Change as needed
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +40,14 @@ class RegisterActivity : AppCompatActivity() {
         buttonRegister = findViewById(R.id.buttonRegister)
         textViewLogin = findViewById(R.id.textViewLogin)
 
-        // Password eye toggle
+        // 🔹 Password eye toggle
         imageViewTogglePassword.setOnClickListener {
             if (isPasswordVisible) {
                 editTextPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                imageViewTogglePassword.setImageResource(R.drawable.ic_eye) // closed eye
+                imageViewTogglePassword.setImageResource(R.drawable.ic_eye)
             } else {
                 editTextPassword.inputType = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                imageViewTogglePassword.setImageResource(R.drawable.ic_eye_open) // open eye
+                imageViewTogglePassword.setImageResource(R.drawable.ic_eye_open)
             }
             editTextPassword.setSelection(editTextPassword.text.length)
             isPasswordVisible = !isPasswordVisible
@@ -67,30 +69,53 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
-                    val uid = it.user?.uid ?: return@addOnSuccessListener
-                    val user = hashMapOf(
-                        "uid" to uid,
-                        "name" to name,
-                        "email" to email,
-                        "role" to role
-                    )
+            if (role == "Hospital") {
+                val input = EditText(this)
+                input.hint = "Enter Hospital Code"
 
-                    firestore.collection("users").document(uid)
-                        .set(user)
-                        .addOnSuccessListener {
-                            Toast.makeText(this, "Registered Successfully", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, LoginActivity::class.java))
-                            finish()
+                AlertDialog.Builder(this)
+                    .setTitle("Hospital Verification")
+                    .setView(input)
+                    .setPositiveButton("Verify") { dialog, _ ->
+                        if (input.text.toString() == HOSPITAL_SECRET_CODE) {
+                            registerUser(name, email, password, role)
+                        } else {
+                            Toast.makeText(this, "Invalid hospital code", Toast.LENGTH_SHORT).show()
                         }
-                        .addOnFailureListener {
-                            Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
-                        }
-                }
-                .addOnFailureListener {
-                    Toast.makeText(this, "Registration failed: ${it.message}", Toast.LENGTH_SHORT).show()
-                }
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            } else {
+                registerUser(name, email, password, role)
+            }
         }
+    }
+
+    private fun registerUser(name: String, email: String, password: String, role: String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                val uid = it.user?.uid ?: return@addOnSuccessListener
+                val user = hashMapOf(
+                    "uid" to uid,
+                    "name" to name,
+                    "email" to email,
+                    "role" to role
+                )
+
+                firestore.collection("users").document(uid)
+                    .set(user)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Registered Successfully", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
+                    }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Registration failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }
