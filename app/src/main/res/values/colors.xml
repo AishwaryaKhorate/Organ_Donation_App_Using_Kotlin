@@ -11,11 +11,27 @@
 
      <!-- Dark Blue -->
     <!-- res/values-night/colors.xml -->
-    <color name="dark_blue">#1565C0</color>
+
     <color name="light_blue">#B3E5FC</color> <!-- Slightly lighter dark blue -->
 
+    <color name="red">#F44336</color>
+    <color name="maroon">#800000</color>
+    <color name="blue">#2196F3</color>
+    <color name="dark_blue">#0D47A1</color>
+    <color name="green">#4CAF50</color>
+    <color name="dark_green">#1B5E20</color>
+    <color name="purple">#9C27B0</color>
+    <color name="deep_purple">#673AB7</color>
+    <color name="gray">#9E9E9E</color>
+    <color name="light_background">#FAFAFA</color>
+    <color name="colorCard1">#FF5722</color>
+    <color name="colorCard2">#3F51B5</color>
+    <color name="colorCard3">#4CAF50</color>
+    <color name="colorCard4">#9C27B0</color>
+    <color name="colorPrimary">#6200EE</color>
 
-        <color name="light_blue_100">#B3E5FC</color>
+
+    <color name="light_blue_100">#B3E5FC</color>
         <color name="light_pink">#FFB6C1</color>
         <color name="light_yellow">#FFF9C4</color>
         <color name="light_green">#C8E6C9</color>
