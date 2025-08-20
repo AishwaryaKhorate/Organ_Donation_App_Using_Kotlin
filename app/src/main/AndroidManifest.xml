@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OrganDonationApp">
         <activity
-            android:name=".DonorProfileActivity"
+            android:name=".AwarenessActivity"
             android:exported="false" />
         <activity
-            android:name=".NotificationsActivity"
+            android:name=".DonorProfileActivity"
             android:exported="false" />
         <activity
             android:name=".AllMedicalHistoryActivity"

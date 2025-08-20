@@ -4,10 +4,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -17,26 +19,39 @@ class AllDonationsActivity : AppCompatActivity() {
 
     private lateinit var donationListLayout: LinearLayout
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var searchView: SearchView
 
-    // pastel colors (will cycle)
+    private val allDonations = mutableListOf<Map<String, String>>()
     private val cardColors = listOf(
-        Color.parseColor("#B3E5FC"), // Light Blue
-        Color.parseColor("#FFB6C1"), // Light Pink
-        Color.parseColor("#FFF9C4"), // Light Yellow
-        Color.parseColor("#C8E6C9")  // Light Green
+        Color.parseColor("#B3E5FC"),
+        Color.parseColor("#FFB6C1"),
+        Color.parseColor("#FFF9C4"),
+        Color.parseColor("#C8E6C9")
     )
-
     private var currentCardCount = 0
-    private val displayedDonationIds = mutableSetOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_all_donations)
 
         donationListLayout = findViewById(R.id.allDonationList)
+        searchView = findViewById(R.id.searchViewOrgan)
         firestore = FirebaseFirestore.getInstance()
 
         loadAllDonations()
+
+        // 🔍 filter when typing
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filterDonations(query ?: "")
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterDonations(newText ?: "")
+                return true
+            }
+        })
     }
 
     private fun loadAllDonations() {
@@ -51,19 +66,14 @@ class AllDonationsActivity : AppCompatActivity() {
                 if (snapshots == null || snapshots.isEmpty) {
                     Toast.makeText(this, "No donations found", Toast.LENGTH_SHORT).show()
                     donationListLayout.removeAllViews()
-                    displayedDonationIds.clear()
                     return@addSnapshotListener
                 }
 
-                // Clear and rebuild list
+                allDonations.clear()
                 donationListLayout.removeAllViews()
-                displayedDonationIds.clear()
                 currentCardCount = 0
 
                 for (doc in snapshots.documents) {
-                    val donationId = doc.id
-                    displayedDonationIds.add(donationId)
-
                     val organ = doc.getString("organ") ?: "Unknown"
                     val donorUid = doc.getString("userId") ?: continue
                     val timestamp = doc.getTimestamp("timestamp") ?: Timestamp.now()
@@ -78,41 +88,55 @@ class AllDonationsActivity : AppCompatActivity() {
                                 Locale.getDefault()
                             ).format(timestamp.toDate())
 
-                            val itemView = layoutInflater.inflate(
-                                R.layout.item_donation,
-                                donationListLayout,
-                                false
+                            val donation = mapOf(
+                                "organ" to organ,
+                                "name" to name,
+                                "contact" to contact,
+                                "date" to formattedDate
                             )
+                            allDonations.add(donation)
 
-                            // Set text values
-                            itemView.findViewById<TextView>(R.id.textOrgan).text = "Organ: $organ"
-                            itemView.findViewById<TextView>(R.id.textName).text = "Name: $name"
-                            itemView.findViewById<TextView>(R.id.textContact).text = "Contact: $contact"
-                            itemView.findViewById<TextView>(R.id.textDate).text = "Date: $formattedDate"
-
-                            // Set organ image
-                            val imageView = itemView.findViewById<ImageView>(R.id.imageOrgan)
-                            imageView.setImageResource(getOrganImage(organ))
-
-                            // Set card appearance
-                            val card = itemView.findViewById<CardView>(R.id.cardViewItem)
-                            card.setCardBackgroundColor(cardColors[currentCardCount % cardColors.size])
-                            card.radius = 12f
-                            card.cardElevation = 6f
-
-                            donationListLayout.addView(itemView) // Already ordered by query
-                            currentCardCount++
-                        }
-                        .addOnFailureListener {
-                            Toast.makeText(
-                                this,
-                                "Error fetching donor info",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            // display all by default
+                            displayDonations(allDonations)
                         }
                 }
             }
     }
+
+    private fun displayDonations(list: List<Map<String, String>>) {
+        donationListLayout.removeAllViews()
+        currentCardCount = 0
+
+        for (donation in list) {
+            val itemView = layoutInflater.inflate(R.layout.item_donation, donationListLayout, false)
+
+            itemView.findViewById<TextView>(R.id.textOrgan).text = "Organ: ${donation["organ"]}"
+            itemView.findViewById<TextView>(R.id.textName).text = "Name: ${donation["name"]}"
+            itemView.findViewById<TextView>(R.id.textContact).text = "Contact: ${donation["contact"]}"
+            itemView.findViewById<TextView>(R.id.textDate).text = "Date: ${donation["date"]}"
+
+            val imageView = itemView.findViewById<ImageView>(R.id.imageOrgan)
+            imageView.setImageResource(getOrganImage(donation["organ"]!!))
+
+            val card = itemView.findViewById<CardView>(R.id.cardViewItem)
+            card.setCardBackgroundColor(cardColors[currentCardCount % cardColors.size])
+
+            donationListLayout.addView(itemView)
+            currentCardCount++
+        }
+    }
+
+    private fun filterDonations(query: String) {
+        val filtered = allDonations.filter {
+            it["organ"]!!.contains(query, ignoreCase = true) ||
+                    it["date"]!!.contains(query, ignoreCase = true)||
+                        it["name"]!!.contains(query, ignoreCase = true)
+
+
+        }
+        displayDonations(filtered)
+    }
+
 
     private fun getOrganImage(organ: String): Int {
         return when (organ.lowercase(Locale.getDefault())) {

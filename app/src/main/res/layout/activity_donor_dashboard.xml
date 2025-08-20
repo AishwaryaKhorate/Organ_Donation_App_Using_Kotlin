@@ -34,4 +34,35 @@
         app:progressMode="true"
         app:selectedDotColor="@color/deep_purple" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|end"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp">
+
+        <!-- Helpline Text -->
+        <TextView
+            android:id="@+id/tvHelpline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Helpline number"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_marginEnd="12dp" />
+
+        <!-- Emergency Call FAB -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabEmergencyCall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_call"
+            app:backgroundTint="@color/red"
+            android:contentDescription="Emergency Call" />
+    </LinearLayout>
+
+
+
 </RelativeLayout>

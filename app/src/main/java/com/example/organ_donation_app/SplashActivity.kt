@@ -6,14 +6,21 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 
+import com.google.firebase.auth.FirebaseAuth
+
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, RegisterActivity::class.java))
-            finish()
-        }, 2000) // 2-second splash screen
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            // User already logged in → go to Dashboard
+            startActivity(Intent(this, DonorDashboardActivity::class.java))
+        } else {
+            // User not logged in → go to Login
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+        finish()
     }
 }

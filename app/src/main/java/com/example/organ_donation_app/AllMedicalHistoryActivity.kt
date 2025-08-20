@@ -2,9 +2,7 @@ package com.example.organ_donation_app
 
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.google.firebase.Timestamp
@@ -16,14 +14,15 @@ class AllMedicalHistoryActivity : AppCompatActivity() {
 
     private lateinit var historyListLayout: LinearLayout
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var searchView: SearchView
 
+    private val donorList = mutableListOf<Map<String, String>>()
     private val cardColors = listOf(
         Color.parseColor("#B3E5FC"), // Light Blue
         Color.parseColor("#FFB6C1"), // Light Pink
         Color.parseColor("#FFF9C4"), // Light Yellow
         Color.parseColor("#C8E6C9")  // Light Green
     )
-
     private var currentCardCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,9 +30,23 @@ class AllMedicalHistoryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_all_medical_history)
 
         historyListLayout = findViewById(R.id.allMedicalHistoryList)
+        searchView = findViewById(R.id.searchViewDonor)
         firestore = FirebaseFirestore.getInstance()
 
         loadAllMedicalHistories()
+
+        // Listen to search input
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filterDonors(query ?: "")
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterDonors(newText ?: "")
+                return true
+            }
+        })
     }
 
     private fun loadAllMedicalHistories() {
@@ -51,56 +64,79 @@ class AllMedicalHistoryActivity : AppCompatActivity() {
                     return@addSnapshotListener
                 }
 
-                // Clear old list so new records are shown on top
+                donorList.clear()
                 historyListLayout.removeAllViews()
                 currentCardCount = 0
 
                 for (doc in snapshots.documents) {
-                    val name = doc.getString("name") ?: "N/A"
-                    val contact = doc.getString("contact") ?: "N/A"
-                    val address = doc.getString("address") ?: "N/A"
-                    val bloodGroup = doc.getString("bloodGroup") ?: "N/A"
-                    val diseases = doc.getString("diseases") ?: "N/A"
-                    val medications = doc.getString("medications") ?: "N/A"
-                    val allergies = doc.getString("allergies") ?: "N/A"
-                    val timestamp = doc.getTimestamp("timestamp") ?: Timestamp.now()
-                    val formattedDate = SimpleDateFormat(
-                        "dd MMM yyyy, hh:mm a",
-                        Locale.getDefault()
-                    ).format(timestamp.toDate())
-
-                    val card = CardView(this).apply {
-                        radius = 16f
-                        cardElevation = 6f
-                        setContentPadding(24, 24, 24, 24)
-                        setCardBackgroundColor(cardColors[currentCardCount % cardColors.size])
-                        val params = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
-                        )
-                        params.setMargins(0, 0, 0, 20)
-                        layoutParams = params
-                    }
-
-                    val tv = TextView(this).apply {
-                        text = """
-                            Name: $name
-                            Contact: $contact
-                            Address: $address
-                            Blood Group: $bloodGroup
-                            Diseases: $diseases
-                            Medications: $medications
-                            Allergies: $allergies
-                            Date: $formattedDate
-                        """.trimIndent()
-                        textSize = 15f
-                        setTextColor(Color.BLACK)
-                    }
-
-                    card.addView(tv)
-                    historyListLayout.addView(card) // Already sorted by Firestore
-                    currentCardCount++
+                    val donor = mapOf(
+                        "name" to (doc.getString("name") ?: "N/A"),
+                        "contact" to (doc.getString("contact") ?: "N/A"),
+                        "address" to (doc.getString("address") ?: "N/A"),
+                        "bloodGroup" to (doc.getString("bloodGroup") ?: "N/A"),
+                        "diseases" to (doc.getString("diseases") ?: "N/A"),
+                        "medications" to (doc.getString("medications") ?: "N/A"),
+                        "allergies" to (doc.getString("allergies") ?: "N/A"),
+                        "date" to SimpleDateFormat(
+                            "dd MMM yyyy, hh:mm a",
+                            Locale.getDefault()
+                        ).format((doc.getTimestamp("timestamp") ?: Timestamp.now()).toDate())
+                    )
+                    donorList.add(donor)
                 }
+                displayDonors(donorList)
             }
     }
+
+    private fun displayDonors(list: List<Map<String, String>>) {
+        historyListLayout.removeAllViews()
+        currentCardCount = 0
+
+        for (donor in list) {
+            val card = CardView(this).apply {
+                radius = 16f
+                cardElevation = 6f
+                setContentPadding(24, 24, 24, 24)
+                setCardBackgroundColor(cardColors[currentCardCount % cardColors.size])
+                val params = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                params.setMargins(0, 0, 0, 20)
+                layoutParams = params
+            }
+
+            val tv = TextView(this).apply {
+                text = """
+                    Name: ${donor["name"]}
+                    Contact: ${donor["contact"]}
+                    Address: ${donor["address"]}
+                    Blood Group: ${donor["bloodGroup"]}
+                    Diseases: ${donor["diseases"]}
+                    Medications: ${donor["medications"]}
+                    Allergies: ${donor["allergies"]}
+                    Date: ${donor["date"]}
+                """.trimIndent()
+                textSize = 15f
+                setTextColor(Color.BLACK)
+            }
+
+            card.addView(tv)
+            historyListLayout.addView(card)
+            currentCardCount++
+        }
+    }
+
+    private fun filterDonors(query: String) {
+        val filtered = donorList.filter {
+            it["address"]!!.contains(query, true)||
+                it["date"]!!.contains(query, true)||
+                     it["name"]!!.contains(query, true)||
+                             it["bloodGroup"]!!.contains(query, true)
+
+
+        }
+        displayDonors(filtered)
+    }
 }
+

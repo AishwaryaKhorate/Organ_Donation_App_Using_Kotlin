@@ -1,6 +1,7 @@
 package com.example.organ_donation_app
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import kotlin.math.abs
@@ -21,6 +23,15 @@ class DonorDashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donor_dashboard)
+
+        val fabCall: FloatingActionButton = findViewById(R.id.fabEmergencyCall)
+        fabCall.setOnClickListener {
+            val phoneNumber = "9822983208" // MOHAN Foundation helpline
+            val dialIntent = Intent(Intent.ACTION_DIAL)
+            dialIntent.data = Uri.parse("tel:$phoneNumber")
+            startActivity(dialIntent)
+        }
+
 
         auth = FirebaseAuth.getInstance()
 
@@ -50,6 +61,11 @@ class DonorDashboardActivity : AppCompatActivity() {
                     val cardMedical: CardView = holder.itemView.findViewById(R.id.cardMedical)
                     val cardLogout: CardView = holder.itemView.findViewById(R.id.cardLogout)
                     val cardProfile: CardView = holder.itemView.findViewById(R.id.cardProfile)
+                    val cardAwareness: CardView = holder.itemView.findViewById(R.id.cardAwareness)
+
+                    cardAwareness.setOnClickListener {
+                        startActivity(Intent(this@DonorDashboardActivity, AwarenessActivity::class.java))
+                    }
 
                     // Set OnClick Listeners for each card
                     cardDonate.setOnClickListener {
@@ -62,13 +78,14 @@ class DonorDashboardActivity : AppCompatActivity() {
                         startActivity(Intent(this@DonorDashboardActivity, DonorProfileActivity::class.java))
                     }
                     cardLogout.setOnClickListener {
-                        auth.signOut()
+                        FirebaseAuth.getInstance().signOut()
                         Toast.makeText(this@DonorDashboardActivity, "Logged out", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this@DonorDashboardActivity, LoginActivity::class.java))
                         finish()
                     }
                 }
             }
+
 
             override fun getItemViewType(position: Int): Int = position
         }
