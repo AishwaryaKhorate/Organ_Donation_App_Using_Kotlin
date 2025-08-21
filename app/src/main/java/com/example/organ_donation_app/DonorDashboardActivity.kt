@@ -24,6 +24,55 @@ class DonorDashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donor_dashboard)
 
+        // --- Header Image Slider ---
+        val imageSlider: ViewPager2 = findViewById(R.id.imageSlider)
+        val dotsIndicatorHeader: DotsIndicator = findViewById(R.id.dotsIndicatorHeader)
+
+        val headerImages = listOf(
+            R.drawable.donor_banner,
+            R.drawable.donar_banner1,
+            R.drawable.donar_banner2,
+            R.drawable.donar_banner3,
+            R.drawable.donar_banner4,
+            R.drawable.donar_banner5,
+
+            )
+
+// Inline adapter (no separate file needed)
+        imageSlider.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+                val imageView = android.widget.ImageView(parent.context).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                }
+                return object : RecyclerView.ViewHolder(imageView) {}
+            }
+
+            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+                (holder.itemView as android.widget.ImageView).setImageResource(headerImages[position])
+            }
+
+            override fun getItemCount(): Int = headerImages.size
+        }
+
+// Attach dots to header slider
+        dotsIndicatorHeader.attachTo(imageSlider)
+
+// Auto-scroll every 3 sec
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val runnable = object : Runnable {
+            override fun run() {
+                val nextItem = (imageSlider.currentItem + 1) % headerImages.size
+                imageSlider.currentItem = nextItem
+                handler.postDelayed(this, 3000)
+            }
+        }
+        handler.postDelayed(runnable, 3000)
+
+
         val fabCall: FloatingActionButton = findViewById(R.id.fabEmergencyCall)
         fabCall.setOnClickListener {
             val phoneNumber = "9822983208" // MOHAN Foundation helpline

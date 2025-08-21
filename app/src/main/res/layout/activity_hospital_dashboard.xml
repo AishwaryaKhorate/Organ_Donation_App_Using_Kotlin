@@ -14,14 +14,26 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/header_image"
+        <!-- 🔄 Image Slider instead of static header image -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/imageSliderHospital"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/donor_banner"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="8dp" />
+        <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+            android:id="@+id/dotsIndicatorHospital"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            app:dotsColor="#BDBDBD"
+            app:selectedDotColor="@color/deep_purple"
+            app:dotsSize="12dp"
+            app:dotsSpacing="6dp" />
 
+
+
+        <!-- Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,8 +41,10 @@
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:layout_gravity="center_horizontal"/>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
 
+        <!-- Row with 2 cards -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,6 +115,7 @@
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
+        <!-- Logout -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardLogout"
             android:layout_width="match_parent"
@@ -130,6 +145,7 @@
                     android:layout_marginTop="8dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
 
     </LinearLayout>
 </ScrollView>

@@ -1,30 +1,50 @@
 package com.example.organ_donation_app
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.text.TextUtils
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 
 class AwarenessActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_awareness)
 
-        val webView: WebView = findViewById(R.id.webViewAwareness)
-        val webSettings: WebSettings = webView.settings
-        webSettings.javaScriptEnabled = true
-        webView.webViewClient = WebViewClient()
+        setupReadMore(findViewById(R.id.tvAnswer1), findViewById(R.id.tvReadMore1))
+        setupReadMore(findViewById(R.id.tvAnswer2), findViewById(R.id.tvReadMore2))
+        setupReadMore(findViewById(R.id.tvAnswer3), findViewById(R.id.tvReadMore3))
+        setupReadMore(findViewById(R.id.tvAnswer4), findViewById(R.id.tvReadMore4))
 
-        // 🔗 Load YouTube awareness video (replace ID with your chosen video)
-        val videoId = "d6gB1yT6z6k" // Example: awareness video ID
-        val html = """
-            <iframe width="100%" height="100%" 
-                src="https://www.youtube.com/embed/$videoId" 
-                frameborder="0" allowfullscreen>
-            </iframe>
-        """.trimIndent()
+        // Video Card
+        val cardVideo: CardView = findViewById(R.id.cardVideo)
+        cardVideo.setOnClickListener {
+            val videoUrl = "https://www.youtube.com/watch?v=R9Xolh0h0zE" // sample awareness video
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+            intent.putExtra("force_fullscreen", true)
+            startActivity(intent)
+        }
+    }
 
-        webView.loadData(html, "text/html", "utf-8")
+    private fun setupReadMore(answerView: TextView, readMoreView: TextView) {
+        var expanded = false
+        readMoreView.setOnClickListener {
+            if (expanded) {
+                // Collapse back
+                answerView.maxLines = 2
+                answerView.ellipsize = TextUtils.TruncateAt.END
+                readMoreView.text = "Read More"
+                expanded = false
+            } else {
+                // Expand full
+                answerView.maxLines = Int.MAX_VALUE
+                answerView.ellipsize = null
+                readMoreView.text = "Read Less"
+                expanded = true
+            }
+        }
     }
 }
