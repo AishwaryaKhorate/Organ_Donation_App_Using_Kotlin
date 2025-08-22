@@ -1,5 +1,6 @@
 package com.example.organ_donation_app
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -73,6 +74,11 @@ class MedicalHistoryActivity : AppCompatActivity() {
                         .update("medicalFormCompleted", true)
                         .addOnSuccessListener {
                             Toast.makeText(this, "Medical history saved & marked complete", Toast.LENGTH_SHORT).show()
+
+                            // 🚀 NEW: Start the ApprovedActivity
+                            val intent = Intent(this, ApprovedActivity::class.java)
+                            startActivity(intent)
+
                             finish()
                         }
                         .addOnFailureListener {

@@ -109,7 +109,7 @@ class DonorProfileActivity : AppCompatActivity() {
     }
 
     /**
-     * NEW: Gathers data from EditTexts and saves it to Firestore.
+     * Gathers data from EditTexts and saves it to Firestore.
      */
     private fun saveProfileData() {
         val user = auth.currentUser

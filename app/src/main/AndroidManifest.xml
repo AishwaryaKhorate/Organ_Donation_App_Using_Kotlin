@@ -12,10 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OrganDonationApp">
         <activity
-            android:name=".ImpactTrackerActivity"
+            android:name=".ApprovedActivity"
             android:exported="false" />
         <activity
-            android:name=".EventsActivity"
+            android:name="com.example.organdonation.ImpactTrackerActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.example.organapp.EventsActivity"
             android:exported="false" />
         <activity
             android:name=".AwarenessActivity"
