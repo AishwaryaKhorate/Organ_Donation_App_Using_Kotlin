@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:gravity="center">
 
-        <!-- Row 1 -->
+        <!-- Row 1: Donate Organ & Medical Form -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,18 +81,19 @@
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
-        <!-- Row 2 -->
+        <!-- Row 2: Donation History & Awareness -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2">
 
-            <!-- Logout -->
+            <!-- Donation History -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardLogout"
+                android:id="@+id/cardTracker"
                 android:layout_width="0dp"
                 android:layout_height="150dp"
                 android:layout_weight="1"
@@ -110,28 +111,28 @@
                     <ImageView
                         android:layout_width="56dp"
                         android:layout_height="56dp"
-                        android:src="@android:drawable/ic_lock_power_off" />
+                        android:src="@android:drawable/ic_menu_recent_history" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Logout"
+                        android:text="your impact tracker"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- My Profile -->
+            <!-- Awareness -->
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardProfile"
+                android:id="@+id/cardAwareness"
                 android:layout_width="0dp"
                 android:layout_height="150dp"
                 android:layout_weight="1"
                 android:layout_margin="8dp"
                 app:cardCornerRadius="20dp"
                 app:cardElevation="10dp"
-                app:cardBackgroundColor="#B3E5FC">
+                app:cardBackgroundColor="#D1C4E9">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -142,57 +143,59 @@
                     <ImageView
                         android:layout_width="56dp"
                         android:layout_height="56dp"
-                        android:src="@android:drawable/ic_menu_myplaces" />
+                        android:src="@android:drawable/ic_menu_info_details" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="My Profile"
+                        android:text="Awareness"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:layout_marginTop="8dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
         </LinearLayout>
 
-            <!-- Row 3 - Awareness (single card in center) -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
+        <!-- Row 3: Events & Volunteering (single centered card) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardAwareness"
-                    android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    android:layout_weight="1"
-                    android:layout_margin="8dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="10dp"
-                    app:cardBackgroundColor="#D1C4E9">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardEvents"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="10dp"
+                app:cardBackgroundColor="#B2DFDB">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
 
-                        <ImageView
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:src="@android:drawable/ic_menu_info_details" />
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@android:drawable/ic_menu_agenda" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Awareness"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:layout_marginTop="8dp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Events and Volunteering"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-   </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 </ScrollView>

@@ -8,10 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.example.organapp.EventsActivity
+import com.example.organdonation.ImpactTrackerActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 import kotlin.math.abs
@@ -24,21 +32,58 @@ class DonorDashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_donor_dashboard)
 
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        // --- ActionBarDrawerToggle for hamburger icon ---
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        // Make hamburger icon white (optional)
+        toggle.drawerArrowDrawable.color = ContextCompat.getColor(this, android.R.color.holo_purple)
+
+        // --- Navigation Drawer Actions ---
+        navView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
+                R.id.nav_profile -> startActivity(Intent(this, DonorProfileActivity::class.java))
+                R.id.nav_emergency -> {
+                    val phoneNumber = "9822983208"
+                    val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+                        data = Uri.parse("tel:$phoneNumber")
+                    }
+                    startActivity(dialIntent)
+                }
+                R.id.nav_logout -> {
+                    FirebaseAuth.getInstance().signOut()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }
+            }
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+
         // --- Header Image Slider ---
         val imageSlider: ViewPager2 = findViewById(R.id.imageSlider)
         val dotsIndicatorHeader: DotsIndicator = findViewById(R.id.dotsIndicatorHeader)
-
         val headerImages = listOf(
             R.drawable.donor_banner,
             R.drawable.donar_banner1,
             R.drawable.donar_banner2,
             R.drawable.donar_banner3,
             R.drawable.donar_banner4,
-            R.drawable.donar_banner5,
+            R.drawable.donar_banner5
+        )
 
-            )
-
-// Inline adapter (no separate file needed)
         imageSlider.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
                 val imageView = android.widget.ImageView(parent.context).apply {
@@ -57,11 +102,9 @@ class DonorDashboardActivity : AppCompatActivity() {
 
             override fun getItemCount(): Int = headerImages.size
         }
-
-// Attach dots to header slider
         dotsIndicatorHeader.attachTo(imageSlider)
 
-// Auto-scroll every 3 sec
+        // Auto-scroll
         val handler = android.os.Handler(android.os.Looper.getMainLooper())
         val runnable = object : Runnable {
             override fun run() {
@@ -72,29 +115,18 @@ class DonorDashboardActivity : AppCompatActivity() {
         }
         handler.postDelayed(runnable, 3000)
 
-
-        val fabCall: FloatingActionButton = findViewById(R.id.fabEmergencyCall)
-        fabCall.setOnClickListener {
-            val phoneNumber = "9822983208" // MOHAN Foundation helpline
-            val dialIntent = Intent(Intent.ACTION_DIAL)
-            dialIntent.data = Uri.parse("tel:$phoneNumber")
-            startActivity(dialIntent)
-        }
-
+        // --- Emergency FAB ---
 
         auth = FirebaseAuth.getInstance()
 
-        // --- Views ---
+        // --- Dashboard Pages ---
         val viewPager: ViewPager2 = findViewById(R.id.viewPager)
         val dotsIndicator: DotsIndicator = findViewById(R.id.dots_indicator)
-
-        // --- Pages for ViewPager2 ---
         val pages = listOf(
-            R.layout.page_dashboard_cards, // Page 1 → all feature cards
-            R.layout.activity_organ_fact   // Page 2 → info/stats
+            R.layout.page_dashboard_cards,
+            R.layout.activity_organ_fact
         )
 
-        // --- Adapter Setup ---
         viewPager.adapter = object : RecyclerView.Adapter<PagerVH>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerVH {
                 val view = LayoutInflater.from(parent.context).inflate(pages[viewType], parent, false)
@@ -104,60 +136,46 @@ class DonorDashboardActivity : AppCompatActivity() {
             override fun getItemCount(): Int = pages.size
 
             override fun onBindViewHolder(holder: PagerVH, position: Int) {
-                // Logic for the first page (Dashboard Cards)
                 if (position == 0) {
                     val cardDonate: CardView = holder.itemView.findViewById(R.id.cardDonate)
                     val cardMedical: CardView = holder.itemView.findViewById(R.id.cardMedical)
-                    val cardLogout: CardView = holder.itemView.findViewById(R.id.cardLogout)
-                    val cardProfile: CardView = holder.itemView.findViewById(R.id.cardProfile)
+                    val cardImpactTracker: CardView = holder.itemView.findViewById(R.id.cardTracker)
+                    val cardEvents: CardView = holder.itemView.findViewById(R.id.cardEvents)
                     val cardAwareness: CardView = holder.itemView.findViewById(R.id.cardAwareness)
 
                     cardAwareness.setOnClickListener {
                         startActivity(Intent(this@DonorDashboardActivity, AwarenessActivity::class.java))
                     }
-
-                    // Set OnClick Listeners for each card
                     cardDonate.setOnClickListener {
                         startActivity(Intent(this@DonorDashboardActivity, OrganDonationActivity::class.java))
                     }
                     cardMedical.setOnClickListener {
                         startActivity(Intent(this@DonorDashboardActivity, MedicalHistoryActivity::class.java))
                     }
-                    cardProfile.setOnClickListener {
-                        startActivity(Intent(this@DonorDashboardActivity, DonorProfileActivity::class.java))
+                    cardImpactTracker.setOnClickListener {
+                        startActivity(Intent(this@DonorDashboardActivity, ImpactTrackerActivity::class.java))
                     }
-                    cardLogout.setOnClickListener {
-                        FirebaseAuth.getInstance().signOut()
-                        Toast.makeText(this@DonorDashboardActivity, "Logged out", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this@DonorDashboardActivity, LoginActivity::class.java))
-                        finish()
+                    cardEvents.setOnClickListener {
+                        startActivity(Intent(this@DonorDashboardActivity, EventsActivity::class.java))
                     }
                 }
             }
 
-
             override fun getItemViewType(position: Int): Int = position
         }
-
-        // --- Attach Indicator and Transformer ---
         dotsIndicator.attachTo(viewPager)
         viewPager.setPageTransformer(ZoomOutPageTransformer())
     }
 
-    // ViewHolder class for the ViewPager
     class PagerVH(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    // Swipe animation effect class
     class ZoomOutPageTransformer : ViewPager2.PageTransformer {
         private val MIN_SCALE = 0.9f
         private val MIN_ALPHA = 0.6f
-
         override fun transformPage(view: View, position: Float) {
             when {
-                position < -1 -> { // [-Infinity,-1)
-                    view.alpha = 0f
-                }
-                position <= 1 -> { // [-1,1]
+                position < -1 -> view.alpha = 0f
+                position <= 1 -> {
                     val scaleFactor = MIN_SCALE.coerceAtLeast(1 - abs(position))
                     val vertMargin = view.height * (1 - scaleFactor) / 2
                     val horzMargin = view.width * (1 - scaleFactor) / 2
@@ -170,9 +188,7 @@ class DonorDashboardActivity : AppCompatActivity() {
                     view.scaleY = scaleFactor
                     view.alpha = (MIN_ALPHA + (((scaleFactor - MIN_SCALE) / (1 - MIN_SCALE)) * (1 - MIN_ALPHA)))
                 }
-                else -> { // (1,+Infinity]
-                    view.alpha = 0f
-                }
+                else -> view.alpha = 0f
             }
         }
     }

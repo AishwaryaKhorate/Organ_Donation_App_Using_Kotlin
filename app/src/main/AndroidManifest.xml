@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OrganDonationApp">
         <activity
+            android:name=".ImpactTrackerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EventsActivity"
+            android:exported="false" />
+        <activity
             android:name=".AwarenessActivity"
             android:exported="false" />
         <activity

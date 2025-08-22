@@ -1,82 +1,81 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DonorDashboardActivity">
 
-    <!-- Header Image Slider -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/imageSlider"
+    <!-- Main Content -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true" />
+        android:layout_height="match_parent">
 
-    <!-- Dots Indicator for Header -->
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-        android:id="@+id/dotsIndicatorHeader"
+        <!-- Toolbar at the top -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            app:title="Donar Dashboard"
+            app:titleTextColor="@android:color/black"
+            app:navigationIcon="@drawable/ic_menu_white" />
+
+        <!-- Header Image Slider -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/imageSlider"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@id/toolbar" />
+
+        <!-- Dots Indicator for Header -->
+        <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+            android:id="@+id/dotsIndicatorHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imageSlider"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            app:dotsColor="#BDBDBD"
+            app:selectedDotColor="@color/deep_purple"
+            app:dotsSize="12dp"
+            app:dotsSpacing="6dp" />
+
+        <!-- Emergency Call Row -->
+
+
+        <!-- Cards ViewPager -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/imageSlider" />
+
+        <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+            android:id="@+id/dots_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/viewPager"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            app:dotsColor="#BDBDBD"
+            app:dotsCornerRadius="8dp"
+            app:dotsSize="12dp"
+            app:dotsSpacing="4dp"
+            app:dotsWidthFactor="2.5"
+            app:progressMode="true"
+            app:selectedDotColor="@color/deep_purple" />
+
+    </RelativeLayout>
+
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/imageSlider"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        app:dotsColor="#BDBDBD"
-        app:selectedDotColor="@color/deep_purple"
-        app:dotsSize="12dp"
-        app:dotsSpacing="6dp" />
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical|end"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp">
-
-        <!-- Helpline Text -->
-        <TextView
-            android:id="@+id/tvHelpline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Emergency call"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_marginEnd="15dp" />
-
-        <!-- Emergency Call FAB -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabEmergencyCall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_call"
-            app:backgroundTint="@color/red"
-            android:contentDescription="Emergency Call" />
-    </LinearLayout>
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/imageSlider" />
+        android:layout_gravity="start"
+        android:background="@android:color/white"
+        app:menu="@menu/drawer_menu" />
 
-    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
-        android:id="@+id/dots_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/viewPager"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        app:dotsColor="#BDBDBD"
-        app:dotsCornerRadius="8dp"
-        app:dotsSize="12dp"
-        app:dotsSpacing="4dp"
-        app:dotsWidthFactor="2.5"
-        app:progressMode="true"
-        app:selectedDotColor="@color/deep_purple" />
-
-
-
-</RelativeLayout>
+</androidx.drawerlayout.widget.DrawerLayout>
